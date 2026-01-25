@@ -1,15 +1,19 @@
 using VinDex.Api.Services;
+using Microsoft.EntityFrameworkCore;
+using VinDex.Api.Data;
+using VinDex.Api.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
 builder.Services.AddHttpClient<VinDecoderService>();
+
+builder.Services.AddDbContext<VinDexDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
 var app = builder.Build();
 

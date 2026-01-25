@@ -1,21 +1,30 @@
-using System.Net.Http.Json;
 using System.Text.Json;
 using VinDex.Api.Models.Nhtsa;
 using VinDex.Api.Models.Vehicles;
+using VinDex.Api.Data.Repositories;
+using VinDex.Api.Services.Mappers;
 
 namespace VinDex.Api.Services;
 
 public class VinDecoderService
 {
     private readonly HttpClient _httpClient;
+    private readonly IVehicleRepository _repository;
 
-    public VinDecoderService(HttpClient httpClient)
+    public VinDecoderService(HttpClient httpClient, IVehicleRepository repository)
     {
         _httpClient = httpClient;
+        _repository = repository;
     }
 
     public async Task<VehicleInfoDto?> DecodeVinAsync(string vin)
     {
+        var existing = await _repository.GetByVinAsync(vin);
+        if (existing != null)
+        {
+            return VehicleMapper.ToDto(existing);
+        }
+
         var url = $"https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/{vin}?format=json";
 
         var response = await _httpClient.GetAsync(url);
@@ -29,7 +38,7 @@ public class VinDecoderService
         if (result == null)
             return null;
 
-        return new VehicleInfoDto
+        var dto = new VehicleInfoDto
         {
             Vin = result.VIN,
             Make = result.Make,
@@ -52,5 +61,12 @@ public class VinDecoderService
                 State = result.PlantState
             }
         };
+
+        // Save to repository
+        var entity = VehicleMapper.ToEntity(dto);
+        await _repository.AddAsync(entity);
+        await _repository.SaveChangesAsync();
+
+        return dto;
     }
 }
