@@ -7,7 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<VinDecoderService>();
+builder.Services.AddHttpClient<RecallService>();
 
 builder.Services.AddDbContext<VinDexDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
