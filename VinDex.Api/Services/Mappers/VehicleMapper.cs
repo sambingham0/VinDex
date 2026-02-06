@@ -40,12 +40,12 @@ public static class VehicleMapper
             Year = dto.Year,
             BodyStyle = dto.BodyStyle,
             VehicleType = dto.VehicleType,
-            EngineCylinders = dto.Engine.Cylinders,
-            Horsepower = dto.Engine.Horsepower,
-            DisplacementLiters = dto.Engine.DisplacementLiters,
-            FuelType = dto.Engine.FuelType,
-            PlantCountry = dto.Manufacturing.Country,
-            PlantState = dto.Manufacturing.State,
+            EngineCylinders = dto.Engine?.Cylinders,
+            Horsepower = dto.Engine?.Horsepower,
+            DisplacementLiters = dto.Engine?.DisplacementLiters,
+            FuelType = dto.Engine?.FuelType,
+            PlantCountry = dto.Manufacturing?.Country,
+            PlantState = dto.Manufacturing?.State,
             CreatedAt = DateTime.UtcNow
         };
     }

@@ -39,6 +39,14 @@ public class VinDecoderService
         if (result == null)
             return null;
 
+        if (string.IsNullOrWhiteSpace(result.Vin) ||
+            string.IsNullOrWhiteSpace(result.Make) ||
+            string.IsNullOrWhiteSpace(result.Model))
+        {
+            return null;
+        }
+
+
         if (!int.TryParse(result.ModelYear, NumberStyles.Integer, CultureInfo.InvariantCulture, out var modelYear))
             return null;
 
