@@ -20,13 +20,15 @@ public class VinDecoderService
 
     public async Task<VehicleInfoDto?> DecodeVinAsync(string vin)
     {
-        var existing = await _repository.GetByVinAsync(vin);
+        var normalizedVin = vin.Trim().ToUpperInvariant();
+
+        var existing = await _repository.GetByVinAsync(normalizedVin);
         if (existing != null)
         {
             return VehicleMapper.ToDto(existing);
         }
 
-        var url = $"https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/{vin}?format=json";
+        var url = $"https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/{normalizedVin}?format=json";
 
         var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
@@ -52,27 +54,64 @@ public class VinDecoderService
 
         var dto = new VehicleInfoDto
         {
-            Vin = result.Vin,
+            Vin = normalizedVin,
             Make = result.Make,
             Model = result.Model,
             Year = modelYear,
+            Trim = result.Trim,
+            Series = result.Series,
             BodyStyle = result.BodyClass,
             VehicleType = result.VehicleType,
-
+            Doors = result.Doors,
             Engine = new EngineInfo
             {
                 Cylinders = int.TryParse(result.EngineCylinders, NumberStyles.Integer, CultureInfo.InvariantCulture, out var cyl) ? cyl : null,
                 Horsepower = int.TryParse(result.EngineHp, NumberStyles.Integer, CultureInfo.InvariantCulture, out var hp) ? hp : null,
-                DisplacementLiters = double.TryParse(result.DisplacementLiters, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var disp) ? disp : null,
-                FuelType = result.FuelTypePrimary
+                DisplacementLiters = double.TryParse(result.DisplacementLiters, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var dispLiters) ? dispLiters : null,
+                FuelType = result.FuelTypePrimary,
+                TransmissionStyle = result.TransmissionStyle,
+                DriveType = result.DriveType,
+                Axles = int.TryParse(result.Axles, NumberStyles.Integer, CultureInfo.InvariantCulture, out var axles) ? axles : null,
+                Gvwr = result.Gvwr,
             },
-
             Manufacturing = new ManufacturingInfo
             {
                 Country = result.PlantCountry,
-                State = result.PlantState
-            }
-        };
+                State = result.PlantState,
+                City = result.PlantCity,
+                Manufacturer = result.Manufacturer,
+                PlantCompanyName = result.PlantCompanyName
+            },
+            // Safety & Restraints
+            Abs = result.Abs,
+            Esc = result.Esc,
+            AirBagFront = result.AirBagLocFront,
+            AirBagSide = result.AirBagLocSide,
+            AirBagCurtain = result.AirBagLocCurtain,
+            LaneKeepSystem = result.LaneKeepSystem,
+            BlindSpotMonitoring = result.BlindSpotMon,
+            Tpms = result.Tpms,
+            DaytimeRunningLights = result.DaytimeRunningLight,
+
+            // Wheels / Dimensions
+            WheelBase = result.WheelBaseShort,
+            WheelSizeFront = result.WheelSizeFront,
+            WheelSizeRear = result.WheelSizeRear,
+            CurbWeight = result.CurbWeightLb,
+            TopSpeedMph = result.TopSpeedMph,
+
+            // Options / Features
+            KeylessIgnition = result.KeylessIgnition,
+            AdaptiveCruiseControl = result.AdaptiveCruiseControl,
+            LaneDepartureWarning = result.LaneDepartureWarning,
+            ParkAssist = result.ParkAssist,
+            AutomaticPedestrianAlertingSound = result.AutomaticPedestrianAlertingSound,
+            BlindSpotIntervention = result.BlindSpotIntervention,
+
+            // Errors / Status
+            ErrorCode = result.ErrorCode,
+            ErrorText = result.ErrorText
+                };
 
         var entity = VehicleMapper.ToEntity(dto);
         await _repository.AddAsync(entity);

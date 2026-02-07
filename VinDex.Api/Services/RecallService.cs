@@ -15,7 +15,9 @@ public class RecallService
 
     public async Task<List<RecallDto>> DecodeRecallAsync(string make, string model, int year)
     {
-        var url = $"https://api.nhtsa.gov/recalls/recallsByVehicle?make={make}&model={model}&modelYear={year}";
+        var encodedMake = Uri.EscapeDataString(make);
+        var encodedModel = Uri.EscapeDataString(model);
+        var url = $"https://api.nhtsa.gov/recalls/recallsByVehicle?make={encodedMake}&model={encodedModel}&modelYear={year}";
 
         var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
@@ -44,7 +46,11 @@ public class RecallService
                     dateFormats,
                     CultureInfo.InvariantCulture,
                     DateTimeStyles.None,
-                    out var parsedDate) ? parsedDate : null
+                    out var parsedDate)
+                    ? parsedDate
+                    : DateTime.TryParse(r.ReportReceivedDateRaw, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var parsedFallback)
+                        ? parsedFallback
+                        : null
             })
             .ToList();
 

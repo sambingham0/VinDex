@@ -14,8 +14,10 @@ public class VehicleRepository : IVehicleRepository
 
     public async Task<Vehicle?> GetByVinAsync(string vin)
     {
+        var normalizedVin = vin.Trim().ToUpperInvariant();
+
         return await _context.Vehicles
-            .FirstOrDefaultAsync(v => v.Vin == vin);
+            .FirstOrDefaultAsync(v => v.Vin == normalizedVin);
     }
 
     public async Task AddAsync(Vehicle vehicle)

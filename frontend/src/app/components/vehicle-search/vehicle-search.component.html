@@ -1,0 +1,96 @@
+<section class="card">
+	<header>
+		<h2>VIN Lookup</h2>
+	</header>
+
+	<form (ngSubmit)="search()" novalidate>
+		<label>
+			VIN
+			<input name="vin" [(ngModel)]="vin" placeholder="Enter VIN" autocomplete="off" />
+		</label>
+
+		<label class="checkbox">
+			<input type="checkbox" name="withRecalls" [(ngModel)]="withRecalls" />
+			Include recalls
+		</label>
+
+		<button type="submit" [disabled]="loading">{{ loading ? 'Searching…' : 'Search' }}</button>
+	</form>
+
+	<p class="error" *ngIf="error">{{ error }}</p>
+
+	<div *ngIf="vehicle">
+		<h3>{{ vehicle.make }} {{ vehicle.model }} ({{ vehicle.year }})</h3>
+		<p *ngIf="vehicle.trim">Trim: {{ vehicle.trim }}</p>
+		<p *ngIf="vehicle.series">Series: {{ vehicle.series }}</p>
+		<p *ngIf="vehicle.bodyStyle">Body: {{ vehicle.bodyStyle }}</p>
+		<p *ngIf="vehicle.vehicleType">Type: {{ vehicle.vehicleType }}</p>
+		<p *ngIf="vehicle.doors">Doors: {{ vehicle.doors }}</p>
+
+		<div *ngIf="vehicle.engine">
+			<h4>Engine</h4>
+			<p *ngIf="vehicle.engine.cylinders">Cylinders: {{ vehicle.engine.cylinders }}</p>
+			<p *ngIf="vehicle.engine.horsepower">HP: {{ vehicle.engine.horsepower }}</p>
+			<p *ngIf="vehicle.engine.displacementLiters">Displacement: {{ vehicle.engine.displacementLiters }} L</p>
+			<p *ngIf="vehicle.engine.fuelType">Fuel: {{ vehicle.engine.fuelType }}</p>
+			<p *ngIf="vehicle.engine.transmissionStyle">Transmission: {{ vehicle.engine.transmissionStyle }}</p>
+			<p *ngIf="vehicle.engine.driveType">Drive: {{ vehicle.engine.driveType }}</p>
+			<p *ngIf="vehicle.engine.axles">Axles: {{ vehicle.engine.axles }}</p>
+			<p *ngIf="vehicle.engine.gvwr">GVWR: {{ vehicle.engine.gvwr }}</p>
+		</div>
+
+		<div *ngIf="vehicle.manufacturing">
+			<h4>Manufacturing</h4>
+			<p *ngIf="vehicle.manufacturing.manufacturer">Manufacturer: {{ vehicle.manufacturing.manufacturer }}</p>
+			<p *ngIf="vehicle.manufacturing.plantCompanyName">Plant: {{ vehicle.manufacturing.plantCompanyName }}</p>
+			<p *ngIf="vehicle.manufacturing.country">Country: {{ vehicle.manufacturing.country }}</p>
+			<p *ngIf="vehicle.manufacturing.state">State: {{ vehicle.manufacturing.state }}</p>
+			<p *ngIf="vehicle.manufacturing.city">City: {{ vehicle.manufacturing.city }}</p>
+		</div>
+
+		<div *ngIf="vehicle.abs || vehicle.esc || vehicle.airBagFront || vehicle.airBagSide || vehicle.airBagCurtain || vehicle.laneKeepSystem || vehicle.blindSpotMonitoring || vehicle.tpms || vehicle.daytimeRunningLights">
+			<h4>Safety & Restraints</h4>
+			<p *ngIf="vehicle.abs">ABS: {{ vehicle.abs }}</p>
+			<p *ngIf="vehicle.esc">ESC: {{ vehicle.esc }}</p>
+			<p *ngIf="vehicle.airBagFront">Front Airbags: {{ vehicle.airBagFront }}</p>
+			<p *ngIf="vehicle.airBagSide">Side Airbags: {{ vehicle.airBagSide }}</p>
+			<p *ngIf="vehicle.airBagCurtain">Curtain Airbags: {{ vehicle.airBagCurtain }}</p>
+			<p *ngIf="vehicle.laneKeepSystem">Lane Keep: {{ vehicle.laneKeepSystem }}</p>
+			<p *ngIf="vehicle.blindSpotMonitoring">Blind Spot: {{ vehicle.blindSpotMonitoring }}</p>
+			<p *ngIf="vehicle.tpms">TPMS: {{ vehicle.tpms }}</p>
+			<p *ngIf="vehicle.daytimeRunningLights">DRL: {{ vehicle.daytimeRunningLights }}</p>
+		</div>
+
+		<div *ngIf="vehicle.wheelBase || vehicle.wheelSizeFront || vehicle.wheelSizeRear || vehicle.curbWeight || vehicle.topSpeedMph">
+			<h4>Wheels & Dimensions</h4>
+			<p *ngIf="vehicle.wheelBase">Wheelbase: {{ vehicle.wheelBase }}</p>
+			<p *ngIf="vehicle.wheelSizeFront">Front Wheel Size: {{ vehicle.wheelSizeFront }}</p>
+			<p *ngIf="vehicle.wheelSizeRear">Rear Wheel Size: {{ vehicle.wheelSizeRear }}</p>
+			<p *ngIf="vehicle.curbWeight">Curb Weight: {{ vehicle.curbWeight }}</p>
+			<p *ngIf="vehicle.topSpeedMph">Top Speed: {{ vehicle.topSpeedMph }} mph</p>
+		</div>
+
+		<div *ngIf="vehicle.keylessIgnition || vehicle.adaptiveCruiseControl || vehicle.laneDepartureWarning || vehicle.parkAssist || vehicle.automaticPedestrianAlertingSound || vehicle.blindSpotIntervention">
+			<h4>Features</h4>
+			<p *ngIf="vehicle.keylessIgnition">Keyless Ignition: {{ vehicle.keylessIgnition }}</p>
+			<p *ngIf="vehicle.adaptiveCruiseControl">Adaptive Cruise: {{ vehicle.adaptiveCruiseControl }}</p>
+			<p *ngIf="vehicle.laneDepartureWarning">Lane Departure Warning: {{ vehicle.laneDepartureWarning }}</p>
+			<p *ngIf="vehicle.parkAssist">Park Assist: {{ vehicle.parkAssist }}</p>
+			<p *ngIf="vehicle.automaticPedestrianAlertingSound">Pedestrian Alert: {{ vehicle.automaticPedestrianAlertingSound }}</p>
+			<p *ngIf="vehicle.blindSpotIntervention">Blind Spot Intervention: {{ vehicle.blindSpotIntervention }}</p>
+		</div>
+
+	</div>
+
+	<div *ngIf="recalls.length">
+		<h3>Recalls ({{ recalls.length }})</h3>
+		<ul>
+			<li *ngFor="let recall of recalls">
+				<strong>{{ recall.campaignNumber }}</strong> — {{ recall.component }}
+				<div>{{ recall.summary }}</div>
+				<small *ngIf="recall.reportReceivedDate">Reported: {{ recall.reportReceivedDate | date }}</small>
+			</li>
+		</ul>
+	</div>
+</section>
+

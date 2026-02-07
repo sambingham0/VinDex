@@ -23,7 +23,13 @@ public class VinController : ControllerBase
     [HttpGet("{vin}")]
     public async Task<IActionResult> Decode(string vin, [FromQuery] bool WRecalls = false)
     {
-        var vehicle = await _cache.GetOrCreateAsync(vin.ToUpperInvariant(), _ => _vinService.DecodeVinAsync(vin));
+        var normalizedVin = vin.Trim().ToUpperInvariant();
+
+        var vehicle = await _cache.GetOrCreateAsync($"vehicle_{normalizedVin}", entry =>
+        {
+            entry.SetAbsoluteExpiration(TimeSpan.FromHours(24));
+            return _vinService.DecodeVinAsync(normalizedVin);
+        });
         if (vehicle == null)
             return NotFound();
 
@@ -33,8 +39,11 @@ public class VinController : ControllerBase
             !string.IsNullOrWhiteSpace(vehicle.Model) &&
             vehicle.Year > 0)
         {
-            recalls = await _recallService.DecodeRecallAsync(
-                vehicle.Make, vehicle.Model, vehicle.Year);
+            recalls = await _cache.GetOrCreateAsync($"recalls_{normalizedVin}", entry =>
+            {
+                entry.SetAbsoluteExpiration(TimeSpan.FromHours(6));
+                return _recallService.DecodeRecallAsync(vehicle.Make, vehicle.Model, vehicle.Year);
+            });
         }
 
         if (WRecalls)
