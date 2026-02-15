@@ -2,17 +2,32 @@ using VinDex.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using VinDex.Api.Data;
 using VinDex.Api.Data.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddMemoryCache();
-builder.Services.AddHttpClient<VinDecoderService>();
-builder.Services.AddHttpClient<RecallService>();
+builder.Services.AddHttpClient<VinDecoderService>()
+    .AddStandardResilienceHandler();
+builder.Services.AddHttpClient<RecallService>()
+    .AddStandardResilienceHandler();
+
+builder.Services.AddScoped<IVinDecoderService>(provider => 
+    new CachedVinDecoderService(
+        provider.GetRequiredService<VinDecoderService>(),
+        provider.GetRequiredService<IMemoryCache>()
+    ));
+
+builder.Services.AddScoped<IRecallService>(provider => 
+    new CachedRecallService(
+        provider.GetRequiredService<RecallService>(),
+        provider.GetRequiredService<IMemoryCache>()
+    ));
 
 // Add CORS policy
-var allowedOrigins = new string[] { "http://localhost:4200", "https://localhost:4200" };
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
 
 builder.Services.AddCors(options =>
 {
@@ -33,7 +48,14 @@ builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    // app.UseHttpsRedirection(); // Disable in containerized/production unless SSL is configured
+}
+else
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseRouting();
 
@@ -42,5 +64,12 @@ app.UseCors("AngularPolicy");
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<VinDexDbContext>();
+    context.Database.Migrate();
+}
 
 app.Run();

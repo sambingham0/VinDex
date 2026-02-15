@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using VinDex.Api.Services;
-using Microsoft.Extensions.Caching.Memory;
 using VinDex.Api.Models.Recalls;
+using VinDex.Api.Utilities;
 
 namespace VinDex.Api.Controllers;
 
@@ -9,27 +9,26 @@ namespace VinDex.Api.Controllers;
 [Route("api/vin")]
 public class VinController : ControllerBase
 {
-    private readonly VinDecoderService _vinService;
-    private readonly RecallService _recallService;
-    private readonly IMemoryCache _cache;
+    private readonly IVinDecoderService _vinService;
+    private readonly IRecallService _recallService;
 
-    public VinController(VinDecoderService vinService, RecallService recallService, IMemoryCache cache)
+    public VinController(IVinDecoderService vinService, IRecallService recallService)
     {
         _vinService = vinService;
         _recallService = recallService;
-        _cache = cache;
     }
 
     [HttpGet("{vin}")]
     public async Task<IActionResult> Decode(string vin, [FromQuery] bool WRecalls = false)
     {
-        var normalizedVin = vin.Trim().ToUpperInvariant();
-
-        var vehicle = await _cache.GetOrCreateAsync($"vehicle_{normalizedVin}", entry =>
+        if (!VinUtils.IsValid(vin))
         {
-            entry.SetAbsoluteExpiration(TimeSpan.FromHours(24));
-            return _vinService.DecodeVinAsync(normalizedVin);
-        });
+            return BadRequest("Invalid VIN format. Must be 17 alphanumeric characters.");
+        }
+
+        var normalizedVin = VinUtils.Normalize(vin);
+
+        var vehicle = await _vinService.DecodeVinAsync(normalizedVin);
         if (vehicle == null)
             return NotFound();
 
@@ -39,11 +38,7 @@ public class VinController : ControllerBase
             !string.IsNullOrWhiteSpace(vehicle.Model) &&
             vehicle.Year > 0)
         {
-            recalls = await _cache.GetOrCreateAsync($"recalls_{normalizedVin}", entry =>
-            {
-                entry.SetAbsoluteExpiration(TimeSpan.FromHours(6));
-                return _recallService.DecodeRecallAsync(vehicle.Make, vehicle.Model, vehicle.Year);
-            });
+            recalls = await _recallService.DecodeRecallAsync(vehicle.Make, vehicle.Model, vehicle.Year);
         }
 
         if (WRecalls)

@@ -23,9 +23,18 @@ export class VehicleSearchComponent {
   constructor(private vehicleService: VehicleService) {}
 
   search(): void {
-    const vin = this.vin.trim().toUpperCase();
+    let vin = this.vin.trim().toUpperCase();
+    
+    // Basic VIN Validation: 17 chars, alphanumeric, no I, O, Q
+    const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/;
+    
     if (!vin) {
       this.error = 'Please enter a VIN.';
+      return;
+    }
+
+    if (!vinRegex.test(vin)) {
+      this.error = 'Invalid VIN format. Must be 17 alphanumeric characters.';
       return;
     }
 

@@ -4,10 +4,11 @@ using VinDex.Api.Models.Nhtsa;
 using VinDex.Api.Models.Vehicles;
 using VinDex.Api.Data.Repositories;
 using VinDex.Api.Services.Mappers;
+using VinDex.Api.Utilities;
 
 namespace VinDex.Api.Services;
 
-public class VinDecoderService
+public class VinDecoderService : IVinDecoderService
 {
     private readonly HttpClient _httpClient;
     private readonly IVehicleRepository _repository;
@@ -20,7 +21,7 @@ public class VinDecoderService
 
     public async Task<VehicleInfoDto?> DecodeVinAsync(string vin)
     {
-        var normalizedVin = vin.Trim().ToUpperInvariant();
+        var normalizedVin = VinUtils.Normalize(vin);
 
         var existing = await _repository.GetByVinAsync(normalizedVin);
         if (existing != null)

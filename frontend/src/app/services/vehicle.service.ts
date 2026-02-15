@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { VehicleInfoDto } from '../models/vehicle-info.model';
 import { RecallDto } from '../models/recall.model';
+import { environment } from '../../environments/environment';
 
 export interface VehicleWithRecalls {
   vehicle: VehicleInfoDto;
@@ -14,7 +15,7 @@ export interface VehicleWithRecalls {
 })
 export class VehicleService {
 
-  private apiBaseUrl = 'https://localhost:7008/api/vin';
+  private apiBaseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

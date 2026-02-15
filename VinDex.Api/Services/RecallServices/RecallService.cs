@@ -5,7 +5,7 @@ using VinDex.Api.Models.Recalls;
 
 namespace VinDex.Api.Services;
 
-public class RecallService
+public class RecallService : IRecallService
 {
     private readonly HttpClient _httpClient;
     public RecallService(HttpClient httpClient)
