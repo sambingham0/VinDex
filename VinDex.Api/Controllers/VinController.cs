@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using VinDex.Api.Services;
 using VinDex.Api.Models.Recalls;
 using VinDex.Api.Utilities;
@@ -7,6 +8,7 @@ namespace VinDex.Api.Controllers;
 
 [ApiController]
 [Route("api/vin")]
+[Authorize]
 public class VinController : ControllerBase
 {
     private readonly IVinDecoderService _vinService;

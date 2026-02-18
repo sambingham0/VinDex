@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace VinDex.Api.Data.Entities;
 
 public class Vehicle
 {
+    [Key]
     public int Id { get; set; }
 
     // Basic Vehicle Identity
