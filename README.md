@@ -35,16 +35,16 @@ VinDex is a Full-Stack VIN (Vehicle Identification Number) lookup tool and manag
 
 ```text
 VinDex/
-├── frontend/               # Angular CLI application
-│   ├── src/app/            # Components, Services, Models, Guards
-│   ├── Dockerfile          # Multi-stage build (Node -> Nginx)
-│   └── nginx.conf          # Nginx reverse proxy configuration
-├── VinDex.Api/             # ASP.NET Core API
-│   ├── Controllers/        # REST API Endpoints (Auth, VIN)
-│   ├── Services/           # Business logic (Caching, NHTSA integration)
-│   ├── Data/               # EF Core DbContext & Repositories
-│   ├── Models/             # Domain Entities and DTOs
-│   └── Dockerfile          # .NET isolated environment
-├── docker-compose.yml      # Orchestrates Postgres, Backend API, and Frontend
-└── run.ps1                 # Script for quick execution
+├── frontend/               Angular CLI application
+│   ├── src/app/            Components, Services, Models, Guards
+│   ├── Dockerfile          Multi-stage build (Node -> Nginx)
+│   └── nginx.conf          Nginx reverse proxy configuration
+├── VinDex.Api/             ASP.NET Core API
+│   ├── Controllers/        REST API Endpoints (Auth, VIN)
+│   ├── Services/           Business logic (Caching, NHTSA integration)
+│   ├── Data/               EF Core DbContext & Repositories
+│   ├── Models/             Domain Entities and DTOs
+│   └── Dockerfile          .NET isolated environment
+├── docker-compose.yml      Orchestrates Postgres, Backend API, and Frontend
+└── run.ps1                 Script for quick execution
 ```
