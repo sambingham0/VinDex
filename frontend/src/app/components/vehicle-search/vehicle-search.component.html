@@ -1,25 +1,40 @@
-<section class="card">
+<section class="card" [class.loading]="loading" [class.growing]="vehicleInfoVisible">
 	<header>
-		<h2>VIN Lookup</h2>
+		<img src="assets/images/Header-Logo.png" alt="VinDex logo" class="logo" />
+		<button type="button" class="logout" (click)="logout()">Log out</button>
 	</header>
 
 	<form (ngSubmit)="search()" novalidate>
-		<label>
-			VIN
-			<input name="vin" [(ngModel)]="vin" placeholder="Enter VIN" autocomplete="off" />
+		<label class="search-field">
+			<div class="search-wrapper">
+				<input
+		      		type="text"
+		      		name="vin"
+		      		[(ngModel)]="vin"
+		      		placeholder="Enter a VIN"
+			  		autocomplete="off"
+		    	/>
+		
+		    	<button type="submit" class="search-icon-btn" [disabled]="loading" >
+		    		<img src="assets/images/Search.png" alt="Search" />
+				</button>
+			</div>
 		</label>
 
 		<label class="checkbox">
 			<input type="checkbox" name="withRecalls" [(ngModel)]="withRecalls" />
 			Include recalls
 		</label>
-
-		<button type="submit" [disabled]="loading">{{ loading ? 'Searching…' : 'Search' }}</button>
 	</form>
+
+	<div class="animation-area" [class.animate]="loading">
+  		<img src="assets/images/Tire.png" class="tire" alt="Tire"/>
+  		<img src="assets/images/Dust.png" class="dust" alt="Dust"/>
+	</div>
 
 	<p class="error" *ngIf="error">{{ error }}</p>
 
-	<div *ngIf="vehicle">
+	<div *ngIf="vehicle" class="vehicle-info" [class.show]="vehicleInfoVisible">
 		<h3>{{ vehicle.make }} {{ vehicle.model }} ({{ vehicle.year }})</h3>
 		<p *ngIf="vehicle.trim">Trim: {{ vehicle.trim }}</p>
 		<p *ngIf="vehicle.series">Series: {{ vehicle.series }}</p>
@@ -82,7 +97,7 @@
 
 	</div>
 
-	<div *ngIf="recalls.length">
+	<div *ngIf="recalls.length" class="recalls">
 		<h3>Recalls ({{ recalls.length }})</h3>
 		<ul>
 			<li *ngFor="let recall of recalls">

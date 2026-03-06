@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { VehicleService, VehicleWithRecalls } from '../../services/vehicle.service';
 import { VehicleInfoDto } from '../../models/vehicle-info.model';
 import { RecallDto } from '../../models/recall.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-vehicle-search',
@@ -13,14 +15,23 @@ import { RecallDto } from '../../models/recall.model';
   styleUrl: './vehicle-search.component.css'
 })
 export class VehicleSearchComponent {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
   vin = '';
   withRecalls = false;
   loading = false;
+  vehicleInfoVisible = false;
   error = '';
   vehicle?: VehicleInfoDto;
   recalls: RecallDto[] = [];
 
   constructor(private vehicleService: VehicleService) {}
+
+  logout(): void {
+    this.authService.clearToken();
+    this.router.navigate(['/login']);
+  }
 
   search(): void {
     let vin = this.vin.trim().toUpperCase();
@@ -40,18 +51,25 @@ export class VehicleSearchComponent {
 
     this.error = '';
     this.loading = true;
+    this.vehicleInfoVisible = false;
     this.vehicle = undefined;
     this.recalls = [];
 
     this.vehicleService.getVehicleInfo(vin, this.withRecalls).subscribe({
       next: (res) => {
-        if (isVehicleWithRecalls(res)) {
-          this.vehicle = res.vehicle;
-          this.recalls = res.recalls ?? [];
-        } else {
-          this.vehicle = res;
-        }
-        this.loading = false;
+        setTimeout(() => {
+          if (isVehicleWithRecalls(res)) {
+            this.vehicle = res.vehicle;
+            this.recalls = res.recalls ?? [];
+          } else {
+            this.vehicle = res;
+          }
+          this.loading = false;
+
+          setTimeout(() => {
+            this.vehicleInfoVisible = true;
+          }, 100); // slight delay to trigger animation
+        }, 1200); // load delay for wheel animation
       },
       error: () => {
         this.error = 'Could not find that VIN.';

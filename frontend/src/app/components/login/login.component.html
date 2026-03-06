@@ -1,0 +1,12 @@
+<section class="card">
+  <header>
+    <h2>Sign in</h2>
+  </header>
+
+  <p>Use your Google account to access VIN lookup.</p>
+
+  <div id="google-signin-button"></div>
+
+  <p class="status" *ngIf="loading">Completing sign-in…</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+</section>
