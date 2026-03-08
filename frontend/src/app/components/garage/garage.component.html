@@ -1,0 +1,23 @@
+<section class="garage-card">
+  <header>
+    <button type="button" class="nav-button" (click)="goToSearch()">Search</button>
+    <img src="assets/images/Header-Logo.png" alt="VinDex logo" class="logo" />
+    <button type="button" class="logout" (click)="logout()">Log out</button>
+  </header>
+
+  <div class="garage-heading">
+    <h2>Your Garage</h2>
+    <p>Saved vehicles stay linked to you and keep their details ready.</p>
+  </div>
+
+  <p class="status" *ngIf="loading">Loading your garage...</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p class="status" *ngIf="!loading && !error && !savedVehicles.length">No saved vehicles yet.</p>
+
+  <div class="garage-grid" *ngIf="!loading && !error && savedVehicles.length">
+    <article class="garage-item" *ngFor="let savedVehicle of savedVehicles">
+      <div class="saved-at">Saved {{ savedVehicle.savedAt | date: 'medium' }}</div>
+      <app-vehicle-details [vehicle]="savedVehicle.vehicle" />
+    </article>
+  </div>
+</section>

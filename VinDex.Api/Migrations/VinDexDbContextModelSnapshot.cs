@@ -51,6 +51,24 @@ namespace VinDex.Api.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("VinDex.Api.Data.Entities.UserVehicle", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId", "VehicleId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("UserVehicles");
+                });
+
             modelBuilder.Entity("VinDex.Api.Data.Entities.Vehicle", b =>
                 {
                     b.Property<int>("Id")
@@ -203,6 +221,35 @@ namespace VinDex.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Vehicles");
+                });
+
+            modelBuilder.Entity("VinDex.Api.Data.Entities.UserVehicle", b =>
+                {
+                    b.HasOne("VinDex.Api.Data.Entities.User", "User")
+                        .WithMany("SavedVehicles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VinDex.Api.Data.Entities.Vehicle", "Vehicle")
+                        .WithMany("SavedByUsers")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("VinDex.Api.Data.Entities.User", b =>
+                {
+                    b.Navigation("SavedVehicles");
+                });
+
+            modelBuilder.Entity("VinDex.Api.Data.Entities.Vehicle", b =>
+                {
+                    b.Navigation("SavedByUsers");
                 });
 #pragma warning restore 612, 618
         }

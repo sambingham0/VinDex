@@ -24,16 +24,18 @@ header {
 	margin-bottom: 1rem;
 	padding-bottom: 0.5rem;
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: flex-start;
+	gap: 1rem;
 }
 
 header .logo {
 	max-width: 500px;
 	height: auto;
-	margin: auto;
+	margin: 0 auto;
 }
 
+button.garage-button,
 button.logout {
 	background-color: #768DCC;
 	color: #2A5232;
@@ -42,9 +44,9 @@ button.logout {
 	padding: 0.35rem 0.65rem;
 	border-radius: 8px;
 	cursor: pointer;
-	margin-left: auto;
 }
 
+button.garage-button:hover,
 button.logout:hover {
 	background: lightblue;
 }
@@ -103,6 +105,12 @@ button[disabled] {
 	margin: 0.25rem 0 0.75rem;
 }
 
+.save-message {
+	color: #17324d;
+	font-weight: 600;
+	margin: 0;
+}
+
 h3, h4 {
 	margin: 0.5rem 0 0.25rem;
 }
@@ -122,6 +130,28 @@ li {
  	opacity: 0;
   	transform: translateY(12px);
   	transition: opacity .4s ease, transform .4s ease;
+}
+
+.vehicle-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+	flex-wrap: wrap;
+}
+
+.save-button {
+	background: #2a5232;
+	color: #f7efe8;
+	border: 1px solid #23452a;
+	padding: 0.55rem 1rem;
+	border-radius: 999px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.save-button:hover:not([disabled]) {
+	background: #35663f;
 }
 
 .recalls {
@@ -213,5 +243,38 @@ li {
 	}
 	100% {
 		transform: translateX(500px) scale(2);
+	}
+}
+
+@media (max-width: 768px) {
+	section.card {
+		margin: 1rem;
+		padding: 1.25rem;
+	}
+
+	header {
+		flex-wrap: wrap;
+	}
+
+	header .logo {
+		order: -1;
+		width: 100%;
+		max-width: 320px;
+	}
+
+	.search-wrapper input,
+	label.checkbox,
+	.vehicle-info,
+	.recalls {
+		margin-left: 0;
+	}
+
+	.search-wrapper input {
+		width: 100%;
+		padding-right: 3rem;
+	}
+
+	.search-icon-btn {
+		right: 0.5rem;
 	}
 }

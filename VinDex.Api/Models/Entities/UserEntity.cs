@@ -9,4 +9,5 @@ public class User
     public required string Email { get; set; }
     public string? Name { get; set; }
     public string? GoogleSubjectId { get; set; }
+    public ICollection<UserVehicle> SavedVehicles { get; set; } = new List<UserVehicle>();
 }

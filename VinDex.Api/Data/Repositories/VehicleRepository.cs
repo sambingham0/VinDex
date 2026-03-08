@@ -20,9 +20,30 @@ public class VehicleRepository : IVehicleRepository
             .FirstOrDefaultAsync(v => v.Vin == normalizedVin);
     }
 
+    public async Task<IReadOnlyList<UserVehicle>> GetGarageEntriesByUserIdAsync(int userId)
+    {
+        return await _context.UserVehicles
+            .AsNoTracking()
+            .Include(uv => uv.Vehicle)
+            .Where(uv => uv.UserId == userId)
+            .OrderByDescending(uv => uv.SavedAt)
+            .ToListAsync();
+    }
+
+    public async Task<UserVehicle?> GetGarageEntryAsync(int userId, int vehicleId)
+    {
+        return await _context.UserVehicles
+            .FirstOrDefaultAsync(uv => uv.UserId == userId && uv.VehicleId == vehicleId);
+    }
+
     public async Task AddAsync(Vehicle vehicle)
     {
         await _context.Vehicles.AddAsync(vehicle);
+    }
+
+    public async Task AddGarageEntryAsync(UserVehicle userVehicle)
+    {
+        await _context.UserVehicles.AddAsync(userVehicle);
     }
 
     public async Task SaveChangesAsync()

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace VinDex.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class userUpdate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -84,6 +84,31 @@ namespace VinDex.Api.Migrations
                     table.PrimaryKey("PK_Vehicles", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserVehicles",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    VehicleId = table.Column<int>(type: "integer", nullable: false),
+                    SavedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserVehicles", x => new { x.UserId, x.VehicleId });
+                    table.ForeignKey(
+                        name: "FK_UserVehicles_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserVehicles_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
@@ -97,6 +122,11 @@ namespace VinDex.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserVehicles_VehicleId",
+                table: "UserVehicles",
+                column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_Vin",
                 table: "Vehicles",
                 column: "Vin",
@@ -106,6 +136,9 @@ namespace VinDex.Api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "UserVehicles");
+
             migrationBuilder.DropTable(
                 name: "Users");
 

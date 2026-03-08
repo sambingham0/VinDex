@@ -65,4 +65,5 @@ public class Vehicle
 
     // Metadata
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public ICollection<UserVehicle> SavedByUsers { get; set; } = new List<UserVehicle>();
 }

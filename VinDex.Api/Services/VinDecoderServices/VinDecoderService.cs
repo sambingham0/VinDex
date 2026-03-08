@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using VinDex.Api.Models.Nhtsa;
 using VinDex.Api.Models.Vehicles;
 using VinDex.Api.Data.Repositories;
@@ -115,8 +116,21 @@ public class VinDecoderService : IVinDecoderService
                 };
 
         var entity = VehicleMapper.ToEntity(dto);
-        await _repository.AddAsync(entity);
-        await _repository.SaveChangesAsync();
+        try
+        {
+            await _repository.AddAsync(entity);
+            await _repository.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            var persistedVehicle = await _repository.GetByVinAsync(normalizedVin);
+            if (persistedVehicle != null)
+            {
+                return VehicleMapper.ToDto(persistedVehicle);
+            }
+
+            throw;
+        }
 
         return dto;
     }
