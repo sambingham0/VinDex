@@ -1,8 +1,13 @@
 <section class="card" [class.loading]="loading" [class.growing]="vehicleInfoVisible">
 	<header>
-		<button type="button" class="garage-button" (click)="openGarage()">Garage</button>
-		<img src="assets/images/Header-Logo.png" alt="VinDex logo" class="logo" />
-		<button type="button" class="logout" (click)="logout()">Log out</button>
+		<div class="header-row header-buttons">
+			<button type="button" class="garage-button" (click)="openGarage()">Garage</button>
+			<button type="button" class="download-pdf-button" (click)="downloadPdf()" [disabled]="!vehicleInfoVisible">Download PDF</button>
+			<button type="button" class="logout" (click)="logout()">Log out</button>
+		</div>
+		<div class="header-row header-logo">
+			<img src="assets/images/Header-Logo.png" alt="VinDex logo" class="logo" />
+		</div>
 	</header>
 
 	<form (ngSubmit)="search()" novalidate>

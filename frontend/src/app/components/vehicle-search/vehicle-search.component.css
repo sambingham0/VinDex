@@ -23,20 +23,34 @@ section.card.growing {
 header {
 	margin-bottom: 1rem;
 	padding-bottom: 0.5rem;
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 1rem;
 }
 
-header .logo {
-	max-width: 500px;
+.header-row {
+	width: 100%;
+	display: flex;
+}
+
+.header-buttons {
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 0.5rem;
+}
+
+.header-logo {
+	justify-content: center;
+	align-items: center;
+}
+
+.header-logo .logo {
+	max-width: 320px;
 	height: auto;
-	margin: 0 auto;
+	display: block;
 }
 
 button.garage-button,
-button.logout {
+button.logout,
+button.download-pdf-button {
 	background-color: lightblue;
 	color: darkgreen;
 	font-weight: 600;
@@ -47,7 +61,8 @@ button.logout {
 }
 
 button.garage-button:hover,
-button.logout:hover {
+button.logout:hover,
+button.download-pdf-button:hover {
 	background: lightblue;
 }
 

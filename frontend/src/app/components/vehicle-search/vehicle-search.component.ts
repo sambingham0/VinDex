@@ -1,4 +1,6 @@
 import { Component, inject } from '@angular/core';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -124,6 +126,81 @@ export class VehicleSearchComponent {
         this.saving = false;
       }
     });
+  }
+
+  async downloadPdf(): Promise<void> {
+    // Find the vehicle info section
+    const vehicleInfoElement = document.querySelector('.vehicle-info');
+    if (!vehicleInfoElement) {
+      return;
+    }
+    // Hide the 'Save to Garage' button before rendering
+    const saveBtn = vehicleInfoElement.querySelector('.save-button') as HTMLElement;
+    let originalDisplay = '';
+    if (saveBtn) {
+      originalDisplay = saveBtn.style.display;
+      saveBtn.style.display = 'none';
+    }
+    // Use html2canvas to render the element
+    const canvas = await html2canvas(vehicleInfoElement as HTMLElement);
+    // Restore the button's display property
+    if (saveBtn) {
+      saveBtn.style.display = originalDisplay;
+    }
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+    // Calculate width/height for A4
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    // Fit image to width, keep aspect ratio
+    const imgWidth = pageWidth - 40;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
+    // Add recalls if present
+    if (this.recalls && this.recalls.length) {
+      let y = 40 + imgHeight;
+      pdf.setFontSize(16);
+      pdf.setTextColor(40, 40, 90);
+      pdf.text('Recalls:', 20, y);
+      y += 24;
+      this.recalls.forEach((recall, idx) => {
+        if (y > pageHeight - 80) {
+          pdf.addPage();
+          y = 40;
+        }
+        // Bold for recall title
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(12);
+        pdf.setTextColor(30, 30, 30);
+        pdf.text(`${idx + 1}. ${recall.campaignNumber} — ${recall.component}`, 24, y);
+        y += 16;
+        // Regular font for summary
+        if (recall.summary) {
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(11);
+          // Split summary into lines for wrapping
+          const summaryLines = pdf.splitTextToSize(recall.summary, pageWidth - 60);
+          summaryLines.forEach((line: string) => {
+            pdf.text(line, 34, y);
+            y += 13;
+          });
+        }
+        // Italic for date
+        if (recall.reportReceivedDate) {
+          pdf.setFont('helvetica', 'italic');
+          pdf.setFontSize(10);
+          pdf.setTextColor(80, 80, 80);
+          pdf.text(`Reported: ${new Date(recall.reportReceivedDate).toLocaleDateString()}`, 34, y);
+          y += 13;
+        }
+        y += 10; // Extra space between recalls
+      });
+      // Reset font
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(11);
+      pdf.setTextColor(0, 0, 0);
+    }
+    pdf.save(`vehicle-info-${this.vehicle?.vin || 'download'}.pdf`);
   }
 }
 
