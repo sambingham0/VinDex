@@ -33,6 +33,17 @@ export class VehicleSearchComponent {
 
   constructor(private vehicleService: VehicleService) {}
 
+  ngOnInit() {
+    // Check if we have state from garage navigation
+    const vinFromState = history.state?.vin;
+    const recallsFromState = history.state?.recalls;
+    if (vinFromState) {
+      this.vin = vinFromState;
+      this.withRecalls = recallsFromState ?? false;
+      this.search();
+    }
+  }
+
   logout(): void {
     this.authService.clearToken();
     this.router.navigate(['/login']);

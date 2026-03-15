@@ -17,6 +17,7 @@
   <div class="garage-grid" *ngIf="!loading && !error && savedVehicles.length">
     <article class="garage-item" *ngFor="let savedVehicle of savedVehicles">
       <div class="saved-at">Saved {{ savedVehicle.savedAt | date: 'medium' }}</div>
+      <button type="button" class="nav-button" (click)="goToSearch(savedVehicle.vehicle.vin, true)">Search for Recalls</button>
       <app-vehicle-details [vehicle]="savedVehicle.vehicle" />
     </article>
   </div>

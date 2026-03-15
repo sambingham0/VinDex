@@ -27,8 +27,10 @@ export class GarageComponent implements OnInit {
     this.loadGarage();
   }
 
-  goToSearch(): void {
-    this.router.navigate(['/search']);
+  goToSearch(vehicleVin?: string, recalls?: boolean): void {
+    this.router.navigate(['/search'],
+      { state: { vin: vehicleVin, recalls: recalls } }
+    );
   }
 
   logout(): void {

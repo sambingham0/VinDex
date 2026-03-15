@@ -37,8 +37,8 @@ header .logo {
 
 button.garage-button,
 button.logout {
-	background-color: #768DCC;
-	color: #2A5232;
+	background-color: lightblue;
+	color: darkgreen;
 	font-weight: 600;
 	border: 2px solid #796799;
 	padding: 0.35rem 0.65rem;
