@@ -43,4 +43,8 @@ export class VehicleService {
   saveVehicle(vin: string): Observable<SaveVehicleResponse> {
     return this.http.post<SaveVehicleResponse>(this.garageApiBaseUrl, { vin });
   }
+
+  deleteVehicle(vin: string): Observable<void> {
+    return this.http.delete<void>(`${this.garageApiBaseUrl}/${vin}`);
+  }
 }

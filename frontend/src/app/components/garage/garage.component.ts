@@ -53,4 +53,15 @@ export class GarageComponent implements OnInit {
       }
     });
   }
+
+  deleteVehicle(vin: string): void {
+    this.vehicleService.deleteVehicle(vin).subscribe({
+      next: () => {
+        this.savedVehicles = this.savedVehicles.filter(v => v.vehicle.vin !== vin);
+      },
+      error: () => {
+        this.error = 'Could not delete the vehicle.';
+      }
+    });
+  }
 }

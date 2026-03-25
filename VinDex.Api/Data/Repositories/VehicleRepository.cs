@@ -46,6 +46,11 @@ public class VehicleRepository : IVehicleRepository
         await _context.UserVehicles.AddAsync(userVehicle);
     }
 
+    public async Task RemoveGarageEntryAsync(UserVehicle userVehicle)
+    {
+        _context.UserVehicles.Remove(userVehicle);
+    }
+
     public async Task SaveChangesAsync()
     {
         await _context.SaveChangesAsync();

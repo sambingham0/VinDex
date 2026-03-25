@@ -9,5 +9,6 @@ public interface IVehicleRepository
     Task<UserVehicle?> GetGarageEntryAsync(int userId, int vehicleId);
     Task AddAsync(Vehicle vehicle);
     Task AddGarageEntryAsync(UserVehicle userVehicle);
+    Task RemoveGarageEntryAsync(UserVehicle userVehicle);
     Task SaveChangesAsync();
 }

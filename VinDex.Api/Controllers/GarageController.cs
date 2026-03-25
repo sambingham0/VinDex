@@ -94,6 +94,39 @@ public class GarageController : ControllerBase
         });
     }
 
+    [HttpDelete("{vin}")]
+    public async Task<IActionResult> RemoveVehicle(string vin)
+    {
+        if (string.IsNullOrWhiteSpace(vin) || !VinUtils.IsValid(vin))
+        {
+            return BadRequest(new { Message = "Invalid VIN format." });
+        }
+
+        var userId = GetUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var normalizedVin = VinUtils.Normalize(vin);
+        var vehicle = await _vehicleRepository.GetByVinAsync(normalizedVin);
+        if (vehicle == null)
+        {
+            return NotFound();
+        }
+
+        var garageEntry = await _vehicleRepository.GetGarageEntryAsync(userId.Value, vehicle.Id);
+        if (garageEntry == null)
+        {
+            return NotFound();
+        }
+
+        await _vehicleRepository.RemoveGarageEntryAsync(garageEntry);
+        await _vehicleRepository.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     private int? GetUserId()
     {
         var userIdValue = User.FindFirstValue("id");
