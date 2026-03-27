@@ -7,11 +7,28 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace VinDex.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class MaintenanceRecord : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "MaintenanceRecords",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    VehicleVin = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Mileage = table.Column<int>(type: "integer", nullable: false),
+                    Notes = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaintenanceRecords", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -110,6 +127,11 @@ namespace VinDex.Api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceRecords_VehicleVin",
+                table: "MaintenanceRecords",
+                column: "VehicleVin");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
@@ -136,6 +158,9 @@ namespace VinDex.Api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "MaintenanceRecords");
+
             migrationBuilder.DropTable(
                 name: "UserVehicles");
 

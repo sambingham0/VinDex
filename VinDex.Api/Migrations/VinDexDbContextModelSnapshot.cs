@@ -22,6 +22,38 @@ namespace VinDex.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("VinDex.Api.Data.Entities.MaintenanceRecordEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Mileage")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("VehicleVin")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleVin");
+
+                    b.ToTable("MaintenanceRecords");
+                });
+
             modelBuilder.Entity("VinDex.Api.Data.Entities.User", b =>
                 {
                     b.Property<int>("Id")

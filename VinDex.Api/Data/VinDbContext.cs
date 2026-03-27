@@ -12,6 +12,7 @@ public class VinDexDbContext : DbContext
     public DbSet<Vehicle> Vehicles => Set<Vehicle>();
     public DbSet<User> Users => Set<User>();
     public DbSet<UserVehicle> UserVehicles => Set<UserVehicle>();
+    public DbSet<MaintenanceRecordEntity> MaintenanceRecords => Set<MaintenanceRecordEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,5 +43,8 @@ public class VinDexDbContext : DbContext
 
         modelBuilder.Entity<UserVehicle>()
             .HasIndex(uv => uv.VehicleId);
+
+        modelBuilder.Entity<MaintenanceRecordEntity>()
+            .HasIndex(m => m.VehicleVin);
     }
 }

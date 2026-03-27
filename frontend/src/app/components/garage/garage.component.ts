@@ -64,4 +64,8 @@ export class GarageComponent implements OnInit {
       }
     });
   }
+
+  goToMaintenance(vin: string): void {
+    this.router.navigate(['/maintenance', vin]);
+  }
 }

@@ -134,18 +134,27 @@ export class VehicleSearchComponent {
     if (!vehicleInfoElement) {
       return;
     }
-    // Hide the 'Save to Garage' button before rendering
+    // Hide the 'Save to Garage' button and save-message before rendering
     const saveBtn = vehicleInfoElement.querySelector('.save-button') as HTMLElement;
-    let originalDisplay = '';
+    const saveMsgElem = vehicleInfoElement.querySelector('.save-message') as HTMLElement;
+    let originalBtnDisplay = '';
+    let originalMsgDisplay = '';
     if (saveBtn) {
-      originalDisplay = saveBtn.style.display;
+      originalBtnDisplay = saveBtn.style.display;
       saveBtn.style.display = 'none';
+    }
+    if (saveMsgElem) {
+      originalMsgDisplay = saveMsgElem.style.display;
+      saveMsgElem.style.display = 'none';
     }
     // Use html2canvas to render the element
     const canvas = await html2canvas(vehicleInfoElement as HTMLElement);
-    // Restore the button's display property
+    // Restore the button and message's display property
     if (saveBtn) {
-      saveBtn.style.display = originalDisplay;
+      saveBtn.style.display = originalBtnDisplay;
+    }
+    if (saveMsgElem) {
+      saveMsgElem.style.display = originalMsgDisplay;
     }
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
@@ -160,7 +169,6 @@ export class VehicleSearchComponent {
     if (this.recalls && this.recalls.length) {
       let y = 40 + imgHeight;
       pdf.setFontSize(16);
-      pdf.setTextColor(40, 40, 90);
       pdf.text('Recalls:', 20, y);
       y += 24;
       this.recalls.forEach((recall, idx) => {
@@ -171,7 +179,6 @@ export class VehicleSearchComponent {
         // Bold for recall title
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(12);
-        pdf.setTextColor(30, 30, 30);
         pdf.text(`${idx + 1}. ${recall.campaignNumber} — ${recall.component}`, 24, y);
         y += 16;
         // Regular font for summary
@@ -189,7 +196,6 @@ export class VehicleSearchComponent {
         if (recall.reportReceivedDate) {
           pdf.setFont('helvetica', 'italic');
           pdf.setFontSize(10);
-          pdf.setTextColor(80, 80, 80);
           pdf.text(`Reported: ${new Date(recall.reportReceivedDate).toLocaleDateString()}`, 34, y);
           y += 13;
         }

@@ -12,8 +12,8 @@ using VinDex.Api.Data;
 namespace VinDex.Api.Migrations
 {
     [DbContext(typeof(VinDexDbContext))]
-    [Migration("20260307235342_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260327202330_MaintenanceRecord")]
+    partial class MaintenanceRecord
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,38 @@ namespace VinDex.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("VinDex.Api.Data.Entities.MaintenanceRecordEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Mileage")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("VehicleVin")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleVin");
+
+                    b.ToTable("MaintenanceRecords");
+                });
 
             modelBuilder.Entity("VinDex.Api.Data.Entities.User", b =>
                 {

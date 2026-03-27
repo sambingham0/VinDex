@@ -88,6 +88,7 @@ builder.Services.AddDbContext<VinDexDbContext>(options =>
 
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IMaintenanceRecordRepository, MaintenanceRecordRepository>();
 
 var app = builder.Build();
 

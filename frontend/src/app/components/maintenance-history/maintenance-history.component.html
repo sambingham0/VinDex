@@ -1,0 +1,35 @@
+<div *ngIf="loading">Loading maintenance history...</div>
+<div *ngIf="!loading && error">{{ error }}</div>
+<div *ngIf="!loading && !error">
+
+  <h2>Maintenance History for VIN: {{ vin }}</h2>
+  <div *ngIf="vehicle" class="vehicle-info-basic">
+    <strong>{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</strong>
+    <span *ngIf="vehicle.trim">({{ vehicle.trim }})</span>
+  </div>
+
+  <button (click)="openForm()">Add Maintenance Record</button>
+
+  <div *ngIf="records.length === 0">No maintenance records found.</div>
+  <ul *ngIf="records.length">
+    <li *ngFor="let record of records">
+      <strong>{{ record.type }}</strong> — {{ record.date | date:'mediumDate' }} — {{ record.mileage }} miles
+      <div *ngIf="record.notes">Notes: {{ record.notes }}</div>
+      <button (click)="editRecord(record)">Edit</button>
+      <button (click)="deleteRecord(record.id)">Delete</button>
+    </li>
+  </ul>
+
+  <div *ngIf="showForm" class="form-modal">
+    <h3>{{ editingId ? 'Edit' : 'Add' }} Maintenance Record</h3>
+    <form (ngSubmit)="submitForm()" #f="ngForm">
+      <label>Type:<input name="type" [(ngModel)]="form.type" required /></label><br />
+      <label>Date:<input name="date" type="date" [(ngModel)]="form.date" required /></label><br />
+      <label>Mileage:<input name="mileage" type="number" [(ngModel)]="form.mileage" required /></label><br />
+      <label>Notes:<textarea name="notes" [(ngModel)]="form.notes"></textarea></label><br />
+      <div *ngIf="formError" class="error">{{ formError }}</div>
+      <button type="submit">Save</button>
+      <button type="button" (click)="closeForm()">Cancel</button>
+    </form>
+  </div>
+</div>

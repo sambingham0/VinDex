@@ -25,7 +25,7 @@ export interface SaveVehicleResponse {
 })
 export class VehicleService {
 
-  private apiBaseUrl = environment.apiUrl;
+  private apiBaseUrl = environment.apiUrl + '/vin';
   private garageApiBaseUrl = environment.garageApiUrl;
 
   constructor(private http: HttpClient) { }
