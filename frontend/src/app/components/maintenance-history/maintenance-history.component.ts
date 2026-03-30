@@ -32,6 +32,14 @@ export class MaintenanceHistoryComponent implements OnInit {
     private vehicleService: VehicleService
   ) {}
 
+  goToGarage(): void {
+    this.router.navigate(['/garage']);
+  }
+
+  logout(): void {
+    this.router.navigate(['/login']);
+  }
+
   ngOnInit(): void {
     this.vin = this.route.snapshot.paramMap.get('vin') || '';
     this.vehicleService.getVehicleInfo(this.vin).subscribe({

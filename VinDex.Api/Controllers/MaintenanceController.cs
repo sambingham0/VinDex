@@ -26,6 +26,15 @@ namespace VinDex.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] MaintenanceRecordEntity record)
         {
+            if (record.Date.Kind == DateTimeKind.Unspecified)
+            {
+                record.Date = DateTime.SpecifyKind(record.Date, DateTimeKind.Utc);
+            }
+            else
+            {
+                record.Date = record.Date.ToUniversalTime();
+            }
+
             var created = await _repo.AddAsync(record);
             return CreatedAtAction(nameof(GetByVin), new { vin = created.VehicleVin }, created);
         }
