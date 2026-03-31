@@ -55,9 +55,7 @@ pnpm-lock.yaml
 
 # Environment / secrets
 .env
-.env.*
 frontend/.env
-frontend/.env.*
 
 # OS generated files
 .DS_Store

@@ -24,6 +24,9 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=vindex;Username=postgres;Password=password
       - ASPNETCORE_URLS=http://+:8080
+      # Secrets loaded from .env
+      - Auth__JwtSigningKey=${JWT_SIGNING_KEY}
+      - Auth__GoogleClientId=${GOOGLE_CLIENT_ID}
     depends_on:
       db:
         condition: service_healthy
