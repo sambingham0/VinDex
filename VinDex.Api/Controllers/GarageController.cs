@@ -18,11 +18,13 @@ public class GarageController : ControllerBase
 {
     private readonly IVehicleRepository _vehicleRepository;
     private readonly IVinDecoderService _vinDecoderService;
+    private readonly IUserRepository _userRepository;
 
-    public GarageController(IVehicleRepository vehicleRepository, IVinDecoderService vinDecoderService)
+    public GarageController(IVehicleRepository vehicleRepository, IVinDecoderService vinDecoderService, IUserRepository userRepository)
     {
         _vehicleRepository = vehicleRepository;
         _vinDecoderService = vinDecoderService;
+        _userRepository = userRepository;
     }
 
     [HttpGet]
@@ -55,6 +57,13 @@ public class GarageController : ControllerBase
         if (userId == null)
         {
             return Unauthorized();
+        }
+
+        // Verify user exists in database
+        var user = await _userRepository.GetByIdAsync(userId.Value);
+        if (user == null)
+        {
+            return Unauthorized(new { Message = "User not found. Please log in again." });
         }
 
         var normalizedVin = VinUtils.Normalize(request.Vin);
